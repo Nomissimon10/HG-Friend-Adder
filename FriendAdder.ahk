@@ -1,16 +1,22 @@
 F1::
-  ; Locate search button on screen
-  ImageSearch, FoundX, FoundY, 0, 0, A_ScreenWidth, A_ScreenHeight, %A_ScriptDir%\plus.png
-  if (ErrorLevel = 2 OR ErrorLevel = 1) {
-    Tooltip "Make sure you are on the search for friends list"
+  if WinExist("Heroes & Generals") {
+    WinActivate
   }
 
+  ; Locate search button on screen
+  ImageSearch, FoundX, FoundY, 0, 0, A_ScreenWidth, A_ScreenHeight, *40 plus.png
+  if (ErrorLevel = 2 OR ErrorLevel = 1) {
+    Tooltip Make sure you are on the search for friends list
+    Sleep, 3000
+    Tooltip
+    return
+  }
   if (ErrorLevel = 0) {
     Tooltip On correct page
   }
 
   ; Read in names from file
-  FileRead, Text, %A_ScriptDir%\Friends.txt
+  FileRead, Text, Friends.txt
   Array := []
   length = 0
   loop, parse, Text, `n
@@ -27,7 +33,7 @@ F1::
     Send %element%
     Click
     Send {Return}
-    Sleep, 1000
+    Sleep, 500
     i++
 
     MouseMove, FoundX + 10, FoundY + 70
@@ -42,7 +48,10 @@ F1::
       Send {BackSpace}
       x++
     }
-    Tooltip Added %i% / %length%
+
+    time := length - i
+    Tooltip Added %i% / %length% | Approx %time%s remaining
   }
+
   ; Exit the script as the task is done
   ExitApp
